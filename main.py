@@ -18,10 +18,10 @@ class MyThread(threading.Thread):
 
     def run(self):  # 把要执行的代码写到run函数里面 线程在创建后会直接运行run函数
         while True:
-            self.vision.get_info()
+            self.visionmodule.get_info()
             global ob,pos
-            ob = self.vision.other_robots[:, :-1]  # Dessert the orientation of other robots
-            pos = self.vision.robot_info
+            ob = self.visionmodule.other_robots[:, :-1]  # Dessert the orientation of other robots
+            pos = self.visionmodule.robot_info
 
 class Config():
     # parameters
@@ -85,12 +85,12 @@ if __name__ == "__main__":
 
     # Get into the running loop
     while True:
-        u, ltraj, cost = dwa.dwa_control(vision.robot_info, min_u, config, goal, path, ob)
+        u, ltraj, cost = dwa.dwa_control(pos, min_u, config, goal, path, ob)
         sender.send_action(0, u[0], u[1], u[2])
         traj = np.vstack((traj, pos))  # store state history
 
         # display debug msg
-        debug.dwa_msgs[0].text.text = "POS: " + str(vision.robot_info)
+        debug.dwa_msgs[0].text.text = "POS: " + str(pos)
         debug.dwa_msgs[1].text.text = "u: " + str(u)
         debug.dwa_msgs[2].text.text = "Final Cost: " + str(cost)
         debug.dwa_msgs[3].text.text = "Round" + str(count+1)
